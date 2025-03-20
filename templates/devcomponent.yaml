@@ -28,6 +28,17 @@ spec:
           enumNames:
             - 'GitHub'
             - 'GitLab'
+        applicationType:
+          title: Select application type
+          type: string
+          description: Select application type for scaffolding- devfile/devcontainer
+          default: devfile
+          enum:
+            - devfile
+            - devcontainer
+          enumNames:
+            - 'Devfile'
+            - 'Devcontainer'
         repositoryUrl:
           title: Source code repository URL
           type: string
@@ -45,7 +56,7 @@ spec:
       input:
         repositoryUrl: '${{ parameters.repositoryUrl }}'
         description: '${{ parameters.description }}'
-        applicationType: devfile
+        applicationType: ${{parameters.applicationType}}
         sourceControl: '${{ parameters.sourceControl }}'
 
   output:

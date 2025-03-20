@@ -7,4 +7,4 @@ spec:
   targets:
     - ./templates/playbooks.yaml
     - ./templates/collections.yaml
-    - ./templates/devfile.yaml
+    - ./templates/devcomponent.yaml
