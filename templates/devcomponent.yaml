@@ -1,13 +1,14 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: ansible-devfile-template
-  title: Create Devfile
+  name: ansible-devcomponent-template
+  title: Create Devfile/Devcontainer
   description: Create a new starter DevFile preconfigured with best practices.
   tags:
     - recommended
     - ansible
     - devfile
+    - devcontainer
 spec:
   owner: ansible-authors
   system: ansible
