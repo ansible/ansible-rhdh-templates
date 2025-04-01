@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: ansible-devcomponent-template
   title: Create Devfile/Devcontainer
-  description: Create a new starter DevFile preconfigured with best practices.
+  description: Create a new starter DevFile/Devcontainer preconfigured with best practices.
   tags:
     - recommended
     - ansible
@@ -43,16 +43,16 @@ spec:
         repositoryUrl:
           title: Source code repository URL
           type: string
-          description: The repository URL where the devfile needs to be scaffolded.
+          description: The repository URL where the devfile/devcontainer needs to be scaffolded.
           maxLength: 150
         description:
-          title: Devfile description
+          title: Devfile/Devcontainer description
           type: string
-          description: Describe the devfile and its purpose to help other users understand what to use it for.
+          description: Describe the component and its purpose to help other users understand what to use it for.
           maxLength: 350
   steps:
     - id: ansible
-      name: Creating the Ansible devfile
+      name: Creating the component
       action: ansible:content:create
       input:
         repositoryUrl: '${{ parameters.repositoryUrl }}'
