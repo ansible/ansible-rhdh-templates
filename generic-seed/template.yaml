@@ -29,6 +29,14 @@ spec:
           ui:backstage:
             review:
               show: false
+        scmType:
+          title: Select source control option
+          type: string
+          description: Select the source control option for your Ansible project.
+          default: Github
+          enum:
+            - Github
+            - Gitlab
         organization:
           title: Organization
           description: Select organization
@@ -115,13 +123,11 @@ spec:
           default: seed_portal_content.yml
         aapHostName:
           title: AAP URL
-          type: string
-          ui:options:
-            rows: 5
-        aapValidateCerts:
-          title: AAP validate certs
-          type: boolean
-          default: false
+          resource: aaphostname
+          ui:field: AAPResourcePicker
+          default:
+            id: 1
+            name: Default
       errorMessage:
         properties:
           useCases: 'Select at least one use case.'
@@ -168,10 +174,9 @@ spec:
            extraVariables:
              aap_hostname: ${{ parameters.aapHostName }}
              aap_token: ${{ parameters.token }}
-             aap_validate_certs: ${{ parameters.aapValidateCerts }}
              usecases: ${{ parameters.useCases }}
              seed_usecase: ${{ parameters.useCases | useCaseNameFilter }}
-             organization_name: ${{ parameters.organization | resourceFilter('name')}}
+             organization: ${{ parameters.organization | resourceFilter('name')}}
      - id: launch-job
        name: Launch job template
        action: rhaap:launch-job-template
@@ -195,6 +200,7 @@ spec:
          token: ${{ parameters.token }}
          values:
            organization: ${{ parameters.organization }}
+           scmType: ${{ parameters.scmType }}
            useCases: ${{ parameters.useCases }}
   output:
     text:
