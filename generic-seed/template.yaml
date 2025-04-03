@@ -45,6 +45,11 @@ spec:
           default:
             id: 1
             name: Default
+        credentials:
+          title: Credentials
+          description: Select SCM credential
+          resource: credentials
+          ui:field: AAPResourcePicker
         scmUrl:
           title: Source control URL
           type: string
@@ -134,6 +139,7 @@ spec:
             scmUrl: ${{ parameters.scmUrl }}
             scmBranch: ${{ parameters.scmBranch }}
             scmUpdateOnLaunch: true
+            credentials: ${{ parameters.credentials }}
      - id: create-ee
        name: Create execution environment
        action: rhaap:create-execution-environment
