@@ -171,6 +171,7 @@ spec:
            jobInventory: ${{ parameters.jobInventory }}
            playbook: ${{ parameters.playbook }}
            executionEnvironment: ${{steps['create-ee'].output.executionEnvironment }}
+           credentials: ${{ parameters.credentials }}
            extraVariables:
              aap_hostname: ${{ parameters.aapHostName }}
              aap_token: ${{ parameters.token }}
