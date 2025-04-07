@@ -166,6 +166,7 @@ spec:
          values:
            templateName: 'RH AAP Demo Seed Job Template'
            templateDescription: 'RH AAP Demo Seed Job Template'
+           scmType: ${{ parameters.scmType }}
            project: ${{steps['create-project'].output.project }}
            organization: ${{ parameters.organization }}
            jobInventory: ${{ parameters.jobInventory }}
