@@ -179,6 +179,7 @@ spec:
              usecases: ${{ parameters.useCases }}
              seed_usecase: ${{ parameters.useCases | useCaseNameFilter }}
              organization: ${{ parameters.organization | resourceFilter('name')}}
+             credential: ${{ parameters.credentials | resourceFilter('name')}}
      - id: launch-job
        name: Launch job template
        action: rhaap:launch-job-template
