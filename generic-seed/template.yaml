@@ -55,7 +55,7 @@ spec:
             name: Default
         credentials:
           title: Credentials
-          description: Select SCM credential
+          description: Select SCM credential for Private repositories
           resource: credentials
           ui:field: AAPResourcePicker
         scmUrl:
