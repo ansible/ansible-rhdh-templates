@@ -28,10 +28,8 @@ spec:
           default: github.com
           enum:
             - github.com
-            - gitlab.com
           enumNames:
             - 'GitHub'
-            - 'GitLab'
         repoOwner:
           title: Source code repository organization name or username
           type: string
@@ -110,9 +108,8 @@ spec:
           sourceControl: ${{ parameters.sourceControl }}
           devSpacesBaseUrl: ${{ steps.ansible.output.devSpacesBaseUrl }}
 
-    - id: publish_github
-      name: Publish to Github
-      if: ${{ parameters.sourceControl == 'github.com' }}
+    - id: publish
+      name: Publish
       action: publish:github
       input:
         allowedHosts:
@@ -122,29 +119,17 @@ spec:
         repoVisibility: 'public'
         defaultBranch: main
 
-    - id: publish_gitlab
-      name: Publish to Gitlab
-      if: ${{ parameters.sourceControl == 'gitlab.com' }}
-      action: publish:gitlab
-      input:
-        allowedHosts:
-          - ${{ parameters.sourceControl }}
-        description: ${{ parameters.description }}
-        repoUrl: ${{ steps.ansible.output.repoUrl }}
-        repoVisibility: 'private'
-        defaultBranch: main
-
     - id: register
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps.publish_github.output.repoContentsUrl if parameters.sourceControl == 'github.com' else steps.publish_gitlab.output.repoContentsUrl }}
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: '/catalog-info.yaml'
 
   output:
     links:
       - title: Repository
-        url: ${{ steps.publish_github.output.remoteUrl if parameters.sourceControl == 'github.com' else steps.publish_gitlab.output.remoteUrl }}
+        url: ${{ steps.publish.output.remoteUrl }}
 
       - title: Open in catalog
         icon: catalog
