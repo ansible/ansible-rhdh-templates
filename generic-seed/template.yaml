@@ -53,6 +53,11 @@ spec:
           default:
             id: 1
             name: Default
+        credentials:
+          title: Credentials
+          description: Select SCM credential for Private repositories
+          resource: credentials
+          ui:field: AAPResourcePicker
         scmUrl:
           title: Source control URL
           type: string
@@ -140,6 +145,7 @@ spec:
             scmUrl: ${{ parameters.scmUrl }}
             scmBranch: ${{ parameters.scmBranch }}
             scmUpdateOnLaunch: true
+            credentials: ${{ parameters.credentials }}
      - id: create-ee
        name: Create execution environment
        action: rhaap:create-execution-environment
@@ -160,17 +166,20 @@ spec:
          values:
            templateName: 'RH AAP Demo Seed Job Template'
            templateDescription: 'RH AAP Demo Seed Job Template'
+           scmType: ${{ parameters.scmType }}
            project: ${{steps['create-project'].output.project }}
            organization: ${{ parameters.organization }}
            jobInventory: ${{ parameters.jobInventory }}
            playbook: ${{ parameters.playbook }}
            executionEnvironment: ${{steps['create-ee'].output.executionEnvironment }}
+           credentials: ${{ parameters.credentials }}
            extraVariables:
              aap_hostname: ${{ parameters.aapHostName }}
              aap_token: ${{ parameters.token }}
              usecases: ${{ parameters.useCases }}
              seed_usecase: ${{ parameters.useCases | useCaseNameFilter }}
              organization: ${{ parameters.organization | resourceFilter('name')}}
+             credential: ${{ parameters.credentials | resourceFilter('name')}}
      - id: launch-job
        name: Launch job template
        action: rhaap:launch-job-template
