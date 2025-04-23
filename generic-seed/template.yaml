@@ -139,8 +139,8 @@ spec:
          token: ${{ parameters.token }}
          deleteIfExist: true
          values:
-            projectName: 'RH AAP Demo Seed Job Template Project'
-            projectDescription: 'RH AAP Demo Seed Job Template Project'
+            projectName: 'Self Service Job Template Project'
+            projectDescription: 'Self Service Job Template Project'
             organization: ${{ parameters.organization }}
             scmUrl: ${{ parameters.scmUrl }}
             scmBranch: ${{ parameters.scmBranch }}
@@ -153,7 +153,7 @@ spec:
          token: ${{ parameters.token }}
          deleteIfExist: true
          values:
-           environmentName: 'RH AAP Demo Seed Job Template execution environment'
+           environmentName: 'Self Service Job Template execution environment'
            organization: ${{ parameters.organization }}
            image: 'quay.io/portal_mvp_patterns/ansible-pattern-loader:latest'
            pull: always
@@ -164,8 +164,8 @@ spec:
          token: ${{ parameters.token }}
          deleteIfExist: true
          values:
-           templateName: 'RH AAP Demo Seed Job Template'
-           templateDescription: 'RH AAP Demo Seed Job Template'
+           templateName: 'Self Service Job Template'
+           templateDescription: 'Self Service Job Template'
            scmType: ${{ parameters.scmType }}
            project: ${{steps['create-project'].output.project }}
            organization: ${{ parameters.organization }}
