@@ -102,8 +102,8 @@
           debug:
             msg: "Warning: Could not create or modify directory {{ source_path | dirname }}. Proceeding with file creation."
           when: 
-            - (dir_creation_result is defined and dir_creation_result.failed) or 
-              (system_dir_creation_result is defined and system_dir_creation_result.failed)
+            - (dir_creation_result is defined and dir_creation_result is failed) or 
+              (system_dir_creation_result is defined and system_dir_creation_result is failed)
 
         - name: Get current timestamp
           command: date -Iseconds
@@ -235,7 +235,7 @@
         - name: Permission change failed
           debug:
             msg: "Failed to change permissions of {{ source_path }}. This may be a system directory or you may lack sufficient privileges."
-          when: perm_result is defined and perm_result.failed
+          when: perm_result is defined and perm_result is failed
 
         - name: System directory protection
           debug:
