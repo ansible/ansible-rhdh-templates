@@ -20,12 +20,12 @@
     
     - name: source_path
       prompt: "Enter source file/directory path"
-      default: "/tmp/example.txt"
+      default: "~/example.txt"
       private: false
     
     - name: destination_path
       prompt: "Enter destination path (for copy/move operations)"
-      default: "/tmp/backup/"
+      default: "~/backup/"
       private: false
     
     - name: file_permissions
@@ -40,7 +40,7 @@
     
     - name: search_directory
       prompt: "Enter directory to search in"
-      default: "/tmp"
+      default: "~/"
       private: false
     
     - name: file_content
@@ -67,12 +67,43 @@
 
     - name: Create file operation
       block:
-        - name: Create directory if needed
+        - name: Check if parent directory exists
+          stat:
+            path: "{{ source_path | dirname }}"
+          register: parent_dir_stat
+          when: "'/' in source_path"
+
+        - name: Create directory if needed (skip if system directory)
           file:
             path: "{{ source_path | dirname }}"
             state: directory
             mode: '0755'
-          when: "'/' in source_path"
+          when: 
+            - "'/' in source_path"
+            - parent_dir_stat is defined
+            - not parent_dir_stat.stat.exists
+            - source_path | dirname not in ['/tmp', '/var/tmp', '/usr/tmp', '/']
+          ignore_errors: true
+          register: dir_creation_result
+
+        - name: Create directory without mode if system directory
+          file:
+            path: "{{ source_path | dirname }}"
+            state: directory
+          when: 
+            - "'/' in source_path"
+            - parent_dir_stat is defined
+            - not parent_dir_stat.stat.exists
+            - source_path | dirname in ['/tmp', '/var/tmp', '/usr/tmp']
+          ignore_errors: true
+          register: system_dir_creation_result
+
+        - name: Warn about directory creation issues
+          debug:
+            msg: "Warning: Could not create or modify directory {{ source_path | dirname }}. Proceeding with file creation."
+          when: 
+            - (dir_creation_result is defined and dir_creation_result.failed) or 
+              (system_dir_creation_result is defined and system_dir_creation_result.failed)
 
         - name: Get current timestamp
           command: date -Iseconds
@@ -179,17 +210,39 @@
             path: "{{ source_path }}"
           register: perm_stat
 
+        - name: Validate path is not a system directory
+          debug:
+            msg: "Warning: Attempting to change permissions on system directory {{ source_path }}"
+          when: 
+            - perm_stat.stat.exists
+            - source_path in ['/tmp', '/var/tmp', '/usr/tmp', '/', '/usr', '/var', '/etc']
+
         - name: Change file/directory permissions
           file:
             path: "{{ source_path }}"
             mode: "{{ file_permissions }}"
           register: perm_result
-          when: perm_stat.stat.exists
+          when: 
+            - perm_stat.stat.exists
+            - source_path not in ['/tmp', '/var/tmp', '/usr/tmp', '/', '/usr', '/var', '/etc']
+          ignore_errors: true
 
         - name: Confirm permission change
           debug:
             msg: "Successfully changed permissions of {{ source_path }} to {{ file_permissions }}"
-          when: perm_result is succeeded
+          when: perm_result is defined and perm_result is succeeded
+
+        - name: Permission change failed
+          debug:
+            msg: "Failed to change permissions of {{ source_path }}. This may be a system directory or you may lack sufficient privileges."
+          when: perm_result is defined and perm_result.failed
+
+        - name: System directory protection
+          debug:
+            msg: "Skipped permission change for system directory {{ source_path }} for security reasons."
+          when: 
+            - perm_stat.stat.exists
+            - source_path in ['/tmp', '/var/tmp', '/usr/tmp', '/', '/usr', '/var', '/etc']
 
         - name: Path not found error
           debug:

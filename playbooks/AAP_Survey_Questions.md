@@ -45,7 +45,7 @@ Variable Name: log_file_path
 Question Text: "Path to save system info log"
 Answer Variable Name: log_file_path
 Answer Type: Text
-Default Answer: "/tmp/system_info.log"
+Default Answer: "~/system_info.log"
 Required: Yes
 Min Length: 1
 Max Length: 255
@@ -170,7 +170,7 @@ Variable Name: source_path
 Question Text: "Source file/directory path"
 Answer Variable Name: source_path
 Answer Type: Text
-Default Answer: "/tmp/example.txt"
+Default Answer: "~/example.txt"
 Required: Yes
 Min Length: 1
 Max Length: 500
@@ -183,7 +183,7 @@ Variable Name: destination_path
 Question Text: "Destination path (for copy/move operations)"
 Answer Variable Name: destination_path
 Answer Type: Text
-Default Answer: "/tmp/backup/"
+Default Answer: "~/backup/"
 Required: No
 Min Length: 0
 Max Length: 500
@@ -250,7 +250,7 @@ Variable Name: search_directory
 Question Text: "Directory to search in"
 Answer Variable Name: search_directory
 Answer Type: Text
-Default Answer: "/tmp"
+Default Answer: "~/"
 Required: No
 Min Length: 0
 Max Length: 500
