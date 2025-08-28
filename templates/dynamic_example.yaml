@@ -15,7 +15,6 @@ spec:
     - title: Provision a Cloud Database (Demo)
       required:
         - token
-        - inventory
         - credentials
         - projectName
         - dbType
@@ -30,12 +29,6 @@ spec:
             review:
               show: false
           ui:widget: hidden
-        inventory:
-          title: Server Group
-          description: |
-            Choose the group of servers you want to update. This will apply your settings to all selected servers.
-          resource: inventories
-          ui:field: AAPResourcePicker
         credentials:
           title: Login Credentials
           description: |
