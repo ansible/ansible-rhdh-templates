@@ -1,0 +1,42 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  namespace: default
+  name: helloworld
+  title: hello-world
+  description: Hello World job template
+  tags: []
+relations: []
+spec:
+  type: service
+  parameters:
+    - title: Please enter the following details
+      required:
+        - token
+      properties:
+        token:
+          title: Token
+          type: string
+          description: Oauth2 token
+          ui:field: AAPTokenField
+          ui:widget: hidden
+          ui:backstage:
+            review:
+              show: false
+          ui:options:
+            disabled: true
+            hidden: true
+  steps:
+    - id: launch-job
+      name: 1-hello-world
+      action: rhaap:launch-job-template
+      input:
+        token: ${{ parameters.token }}
+        values:
+          template: 1-hello-world
+  output:
+    text:
+      - title: 1-hello-world template executed successfully
+        content: "               **Job ID:** ${{steps['launch-job'].output.data.id
+          }}               **Job STATUS:** ${{
+          steps['launch-job'].output.data.status }}             "
