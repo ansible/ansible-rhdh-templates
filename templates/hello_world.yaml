@@ -5,8 +5,6 @@ metadata:
   name: helloworld
   title: hello-world
   description: Hello World job template
-  tags: []
-relations: []
 spec:
   type: service
   parameters:
