@@ -45,22 +45,27 @@
           - "CPU Count: {{ ansible_processor_vcpus }}"
           - "Uptime: {{ ansible_uptime_seconds }} seconds"
 
-    - name: Set target username
-      set_fact:
-        actual_user: "{{ target_user if target_user != '' else ansible_user_id }}"
-
-    - name: Get user information using command
-      shell: "id {{ actual_user }} && getent passwd {{ actual_user }}"
+    - name: Get user information
+      getent:
+        database: passwd
+        key: "{{ target_user if target_user != '' else ansible_user_id }}"
       register: user_info
       failed_when: false
-      changed_when: false
 
     - name: Display user information
       debug:
         msg:
-          - "Target User: {{ actual_user }}"
-          - "User Info Command Output:"
-          - "{{ user_info.stdout_lines | default(['User information not available']) }}"
+          - "User: {{ target_user if target_user != '' else ansible_user_id }}"
+          - "UID: {{ user_info.ansible_facts.getent_passwd[(target_user if target_user != '' else ansible_user_id)][1] | default('N/A') }}"
+          - "GID: {{ user_info.ansible_facts.getent_passwd[(target_user if target_user != '' else ansible_user_id)][2] | default('N/A') }}"
+          - "Home Directory: {{ user_info.ansible_facts.getent_passwd[(target_user if target_user != '' else ansible_user_id)][4] | default('N/A') }}"
+          - "Shell: {{ user_info.ansible_facts.getent_passwd[(target_user if target_user != '' else ansible_user_id)][5] | default('N/A') }}"
+      when: user_info.ansible_facts.getent_passwd is defined and (target_user if target_user != '' else ansible_user_id) in user_info.ansible_facts.getent_passwd
+
+    - name: Display user not found message
+      debug:
+        msg: "User '{{ target_user if target_user != '' else ansible_user_id }}' not found on this system"
+      when: user_info.ansible_facts.getent_passwd is not defined or (target_user if target_user != '' else ansible_user_id) not in user_info.ansible_facts.getent_passwd
 
     - name: Get disk usage information
       shell: df -h
@@ -75,17 +80,17 @@
       shell: ps aux --sort=-%cpu | head -20
       register: top_processes
       changed_when: false
-      when: include_processes | default('no') | bool
+      when: include_processes | bool
 
     - name: Display top processes
       debug:
         msg: "{{ top_processes.stdout_lines }}"
-      when: include_processes | default('no') | bool
+      when: include_processes | bool
 
     - name: Get network information (if requested)
       setup:
         filter: ansible_default_ipv4
-      when: include_network | default('yes') | bool
+      when: include_network | bool
 
     - name: Display network information
       debug:
@@ -93,7 +98,7 @@
           - "Default IPv4 Address: {{ ansible_default_ipv4.address | default('N/A') }}"
           - "Default Gateway: {{ ansible_default_ipv4.gateway | default('N/A') }}"
           - "Default Interface: {{ ansible_default_ipv4.interface | default('N/A') }}"
-      when: include_network | default('yes') | bool
+      when: include_network | bool
 
     - name: Create system information log file
       copy:
