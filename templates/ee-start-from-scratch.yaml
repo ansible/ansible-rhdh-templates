@@ -7,11 +7,10 @@ metadata:
   tags:
     - ansible
     - execution-environment
-    - containers
     - automation
     - start-from-scratch
 spec:
-  type: service
+  type: execution-environment
 
   parameters:
     # Step 1: Base Image Selection
@@ -447,47 +446,40 @@ spec:
       action: catalog:register
       if: ${{ parameters.publishToSCM }}
       input:
-        catalogInfoUrl: ${{ steps['prepare-publish'].output.generatedRepoContentsUrl }}
+        catalogInfoUrl: ${{ steps['prepare-publish'].output.generatedCatalogInfoUrl }}
         optional: true
 
   output:
     links:
-      - title: GitHub Repository
-        url: ${{ steps['publish-github'].output.remoteUrl }}
-        if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
-        icon: github
-
-      - title: GitLab Repository
-        url: ${{ steps['publish-gitlab'].output.remoteUrl }}
-        if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and parameters.sourceControlProvider == 'Gitlab' }}
-        icon: gitlab
+      - title: ${{ parameters.sourceControlProvider }} Repository
+        url: ${{ steps['prepare-publish'].output.generatedFullRepoUrl }}
+        if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) }}
+        icon: ${{ parameters.sourceControlProvider | lower }}
 
       - title: GitHub Pull Request
         url: ${{ steps['publish-github-pull-request'].output.remoteUrl }}
-        if: ${{ parameters.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
+        if: ${{ (parameters.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
         icon: github
 
       - title: GitLab Merge Request
         url: ${{ steps['publish-gitlab-merge-request'].output.mergeRequestUrl	}}
-        if: ${{ parameters.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Gitlab') }}
+        if: ${{ (parameters.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Gitlab') }}
     text:
       - title: Execution Environment Definition File
         content: |
           ```yaml
           ${{ steps['create-ee-definition'].output.eeDefinitionContent }}
-
+      
       - title: Execution Environment README File
         content: |
           ```md
           ${{ steps['create-ee-definition'].output.readmeContent }}
           ```
-
       - title: Execution Environment Template
         content: |
           ```yaml
           ${{ steps['create-template'].output.templateContent }}
           ```
-
       - title: Catalog Entity Descriptor
         content: |
           ```yaml
