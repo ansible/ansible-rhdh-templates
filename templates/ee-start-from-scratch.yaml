@@ -258,16 +258,6 @@ spec:
           type: string
           description: Description for the generated template.
           ui:help: "Helps others understand when to use this template."
-        owner:
-          title: Catalog Owner name
-          type: string
-          description: The Red Hat Developer Hub catalog item owner. This will appear on the “My items” tab.
-          ui:field: EntityPicker
-          ui:options:
-            catalogFilter:
-              kind:
-                - Group
-                - User
         tags:
           title: Tags for the generated template
           description: Enter one or more tags.
@@ -291,7 +281,6 @@ spec:
       required:
         - eeFileName
         - templateDescription
-        - owner
       dependencies:
         publishToSCM:
           oneOf:
@@ -388,7 +377,6 @@ spec:
         componentName: ${{ parameters.eeFileName }}
         description: ${{ parameters.templateDescription }}
         tags: ${{ parameters.tags or [] }}
-        owner: ${{ parameters.owner }}
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl or ''}}
         contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
 
