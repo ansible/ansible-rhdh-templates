@@ -379,6 +379,9 @@ spec:
         tags: ${{ parameters.tags or [] }}
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl or ''}}
         contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
+        publishToSCM: ${{ parameters.publishToSCM }}
+        eeDefinitionContent: ${{ steps['create-ee-definition'].output.eeDefinitionContent }}
+        readmeContent: ${{ steps['create-ee-definition'].output.readmeContent }}
 
     # Step 5: Create and publish to a new GitHub Repository
     - id: publish-github
