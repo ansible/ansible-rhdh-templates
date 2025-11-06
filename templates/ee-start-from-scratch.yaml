@@ -456,12 +456,12 @@ spec:
         url: ${{ steps['publish-gitlab-merge-request'].output.mergeRequestUrl	}}
         if: ${{ (parameters.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Gitlab') }}
     text:
-      - title: Execution Environment Definition File
+      - title: Execution Environment Definition
         content: |
           ```yaml
           ${{ steps['create-ee-definition'].output.eeDefinitionContent }}
       
-      - title: Execution Environment README File
+      - title: Execution Environment README
         content: |
           ```md
           ${{ steps['create-ee-definition'].output.readmeContent }}
@@ -470,9 +470,4 @@ spec:
         content: |
           ```yaml
           ${{ steps['create-template'].output.templateContent }}
-          ```
-      - title: Catalog Entity Descriptor
-        content: |
-          ```yaml
-          ${{ steps['create-catalog-info'].output.catalogInfoContent }}
           ```
