@@ -220,12 +220,10 @@ spec:
             - properties:
                 mcpServers:
                   minItems: 1
-              ui:help: 
             # Case: no selection yet
             - properties:
                 mcpServers:
                   maxItems: 0
-              ui:help: ""
 
     # Step 4: Additional Build Steps
     - title: Additional Build Steps
