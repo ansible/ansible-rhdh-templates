@@ -91,14 +91,44 @@ spec:
               name:
                 type: string
                 title: Collection Name
-                description: Collection name in namespace.collection format
+                description: The name of the collection in namespace.collection format
                 pattern: '^[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+$'
                 ui:placeholder: 'e.g., community.general'
               version:
                 type: string
                 title: Version (Optional)
-                description: Specific version of the collection
+                description: |
+                  The version of the collection to install.
+                  If not specified, the latest version will be installed.
                 ui:placeholder: 'e.g., 7.2.1'
+              source:
+                type: string
+                title: Source (Optional)
+                description: |
+                  The Galaxy URL to pull the collection from.
+                  If type is 'file', 'dir', or 'subdirs', this should be a local path to the collection.
+                ui:placeholder: 'e.g., https://github.com/ansible-collections/community.general'
+              type:
+                type: string
+                title: Type (Optional)
+                description: Determines the source of the collection.
+                enum:
+                  - 'file'
+                  - 'galaxy'
+                  - 'git'
+                  - 'url'
+                  - 'dir'
+                  - 'subdirs'
+              signatures:
+                type: array
+                title: Signatures (Optional)
+                description: |
+                  A list of signature sources that are used to supplement those found on the Galaxy server during collection installation and ansible-galaxy collection verify.
+                  Signature sources should be URIs that contain the detached signature.
+                items:
+                  type: string
+                  title: Signature
+                  description: URI of the signature file
           ui:options:
             addable: true
             orderable: true
@@ -120,9 +150,11 @@ spec:
                 specifyRequirements:
                   const: true
                 pythonRequirements:
-                  title: Python Requirements
+                  title: Additional Python Requirements
                   type: array
-                  description: Add Python requirements to be included in the execution environment definition file (optional).
+                  description: |
+                    Specify additional python packages that are required in addition to what the selected collections already specify as dependencies.
+                    Packages already specified in the collections as a dependency should not be repeated here.
                   items:
                     type: string
                     title: Python package
@@ -138,9 +170,11 @@ spec:
                   title: Pick a file with Python requirements
                   description: Upload a requirements.txt file with python package details
                 systemPackages:
-                  title: System Packages
+                  title: Additional System Packages
                   type: array
-                  description: Add system packages/binaries to be included in the execution environment definition file (optional).
+                  description: |
+                    Specify additional system-level packages that are required in addition to what the selected collections already specify as dependencies.
+                    Packages already specified in the collections as a dependency should not be repeated here.
                   items:
                     type: string
                     title: System package
@@ -426,14 +460,8 @@ spec:
         title: ${{ steps['prepare-publish'].output.generatedTitle }}
         description: ${{ steps['prepare-publish'].output.generatedDescription }}
 
-    # Step 6: Register as Catalog Component
-    # TO-DO: verify if the repoContentsUrl should be the PR/MR branch (when PR/MR path is followed) or the main branch
-    # There is an optional flag that permits registered location to optionally exist,
-    # which means that when the PR/MR is merged in the target branch, the component will be visible in the catalog.
-    # however, that would require a new input that determines what the target branch is
-    # now it defaults to main because that is what the default branches are for Github and Gitlab
     - id: register-catalog-component
-      name: Register as Catalog Component
+      name: Register published EE as a Catalog Component
       action: catalog:register
       if: ${{ parameters.publishToSCM }}
       input:
