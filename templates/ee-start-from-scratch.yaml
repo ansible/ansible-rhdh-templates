@@ -29,7 +29,7 @@ spec:
             - 'Red Hat Universal Base Image 9 w/ Python 3.11 (Recommended)'
             - 'Red Hat Ansible Minimal EE base (RHEL 9) (Requires subscription)'
             - 'Custom Image'
-          ui:widget: radio
+          ui:field: BaseImagePicker
       dependencies:
         baseImage:
           oneOf:
@@ -129,15 +129,13 @@ spec:
                   type: string
                   title: Signature
                   description: URI of the signature file
-          ui:options:
-            addable: true
-            orderable: true
-            removable: true
+          ui:field: CollectionsPicker
         collectionsFile:
           title: Upload a requirements.yml file
           description: Optionally upload a requirements file with collection details
           type: string
           format: data-url
+          ui:field: FileUploadPicker
         specifyRequirements:
           title: Specify additional Python requirements and System packages
           type: boolean
@@ -160,15 +158,13 @@ spec:
                     title: Python package
                     description: Python package (with optional version specification)
                     ui:placeholder: 'e.g., requests>=2.28.0'
-                  ui:options:
-                    addable: true
-                    orderable: true
-                    removable: true
+                  ui:field: PackagesPicker
                 pythonRequirementsFile:
                   type: string
                   format: data-url
                   title: Pick a file with Python requirements
                   description: Upload a requirements.txt file with python package details
+                  ui:field: FileUploadPicker
                 systemPackages:
                   title: Additional System Packages
                   type: array
@@ -180,15 +176,13 @@ spec:
                     title: System package
                     description: System package
                     ui:placeholder: 'e.g., libxml2-dev [platform:dpkg], libssh-devel [platform:rpm]'
-                  ui:options:
-                    addable: true
-                    orderable: true
-                    removable: true
+                  ui:field: PackagesPicker
                 systemPackagesFile:
                   type: string
                   format: data-url
                   title: Pick a file with system packages
                   description: Upload a bindep.txt file with system package details
+                  ui:field: FileUploadPicker
             - properties:
                 specifyRequirements:
                   const: false
@@ -207,23 +201,7 @@ spec:
               - Github
               - AWS
               - Azure
-            ui:widget: select
-            ui:help: "Update placeholder values within the YAML file once the EE definition file is created."
-          ui:options:
-            addable: true
-            orderable: true
-            removable: true
-      dependencies:
-        mcpServers:
-          oneOf:
-            # Case: at least one item selected
-            - properties:
-                mcpServers:
-                  minItems: 1
-            # Case: no selection yet
-            - properties:
-                mcpServers:
-                  maxItems: 0
+          ui:field: MCPServersPicker
 
     # Step 4: Additional Build Steps
     - title: Additional Build Steps
@@ -264,17 +242,8 @@ spec:
                 description: List of commands to execute
                 items:
                   type: string
-                  title: Command
-                  ui:placeholder: 'e.g., RUN dnf update'
-                ui:options:
-                  addable: true
-                  orderable: true
-                  removable: true
             required: ['stepType', 'commands']
-          ui:options:
-            addable: true
-            orderable: true
-            removable: true
+          ui:field: AdditionalBuildStepsPicker
 
     # Step 9: Repository Configuration
     - title: Generate (and Publish)
@@ -284,6 +253,7 @@ spec:
           title: EE File Name
           type: string
           description: Name of the Execution Environment file.
+          ui:field: EEFileNamePicker
           ui:help: "Specify the filename for the EE definition file."
         templateDescription:
           title: Template Description
