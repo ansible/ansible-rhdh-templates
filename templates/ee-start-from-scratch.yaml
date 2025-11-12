@@ -254,15 +254,21 @@ spec:
           type: string
           description: Name of the Execution Environment file.
           ui:field: EEFileNamePicker
-          ui:help: "Specify the filename for the EE definition file."
+          ui:help: "Specify the filename for the Execution Environment definition file."
         templateDescription:
-          title: Template Description
+          title: Description
           type: string
-          description: Description for the generated template.
-          ui:help: "Helps others understand when to use this template."
+          description: |
+            Description for the generated Execution Environment definition.
+            This description is used when displaying the Execution Environment definition in the catalog.
+            Additionally, this description is also used in the generated Software Template with SCM repository publishing.
         tags:
-          title: Tags for the generated template
-          description: Enter one or more tags.
+          title: Tags
+          description: |
+            Enter one or more tags for the generated Execution Environment definition.
+            When registering the Execution Environment as a catalog component, these tags will be used to categorize the component.
+            By default, the tag 'execution-environment' is added to the component. You can add more tags to the component by adding them here.
+            While you can remove the default tag, it is recommended to keep it as it is used to display the EE component in the catalog.
           type: array
           default:
             - 'execution-environment'
@@ -417,7 +423,7 @@ spec:
         title: ${{ steps['prepare-publish'].output.generatedTitle }}
         description: ${{ steps['prepare-publish'].output.generatedDescription }}
 
-    # Step 5: Publish generated files as a Gitlab Merge Request
+    # Step 6: Publish generated files as a Gitlab Merge Request
     - id: publish-gitlab-merge-request
       name: Publish generated files as a Gitlab Merge Request
       action: publish:gitlab:merge-request
