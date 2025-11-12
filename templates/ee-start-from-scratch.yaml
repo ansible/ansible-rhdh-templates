@@ -261,7 +261,7 @@ spec:
           description: |
             Description for the generated Execution Environment definition.
             This description is used when displaying the Execution Environment definition in the catalog.
-            Additionally, this description is also used in the generated Software Template with SCM repository publishing.
+            Additionally, this description is also used in the Software Template that is generated with SCM-based publishing.
         tags:
           title: Tags
           description: |
