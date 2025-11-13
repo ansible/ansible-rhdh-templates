@@ -246,7 +246,7 @@ spec:
           ui:field: AdditionalBuildStepsPicker
 
     # Step 9: Repository Configuration
-    - title: Generate (and Publish)
+    - title: Generate and publish
       description: Generate and publish the EE definition file and template.
       properties:
         eeFileName:
@@ -265,10 +265,8 @@ spec:
         tags:
           title: Tags
           description: |
-            Enter one or more tags for the generated Execution Environment definition.
-            When registering the Execution Environment as a catalog component, these tags will be used to categorize the component.
-            By default, the tag 'execution-environment' is added to the component. You can add more tags to the component by adding them here.
-            While you can remove the default tag, it is recommended to keep it as it is used to display the EE component in the catalog.
+            Add tags to make this EE definition discoverable in the catalog.
+            The default execution-environment tag identifies this as an EE component; keeping it is highly recommended
           type: array
           default:
             - 'execution-environment'
@@ -332,11 +330,15 @@ spec:
     # Step 1: Create EE definition files
     - id: create-ee-definition
       name: Create Execution Environment Definition
-      action: ansible:ee:create-definition
+      action: ansible:create:ee-definition
       input:
         values:
           eeFileName: ${{ parameters.eeFileName }}
+          eeDescription: ${{ parameters.templateDescription }}
+          tags: ${{ parameters.tags or [] }}
+          publishToSCM: ${{ parameters.publishToSCM }}
           baseImage: ${{ parameters.baseImage === 'custom' and parameters.customBaseImage or parameters.baseImage }}
+          customBaseImage: ${{ parameters.customBaseImage or '' }}
           popularCollections: ${{ parameters.popularCollections or [] }}
           collections: ${{ parameters.collections or [] }}
           collectionsFile: ${{ parameters.collectionsFile or [] }}
@@ -346,23 +348,9 @@ spec:
           systemPackagesFile: ${{ parameters.systemPackagesFile or [] }}
           mcpServers: ${{ parameters.mcpServers or [] }}
           additionalBuildSteps: ${{ parameters.additionalBuildSteps or [] }}
-
-    # Step 2: Generate EE definition template
-    - id: create-template
-      name: Generating Template for the EE Definition
-      action: ansible:ee:create-template
-      input:
-        values:
-          contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
-          eeFileName: ${{ parameters.eeFileName }}
-          baseImage: ${{ parameters.baseImage or '' }}
-          customBaseImage: ${{ parameters.customBaseImage or '' }}
-          collections: ${{ steps['create-ee-definition'].output.collections }}
-          pythonRequirements: ${{ steps['create-ee-definition'].output.pythonRequirements }}
-          systemPackages: ${{ steps['create-ee-definition'].output.systemPackages }}
-          mcpServers: ${{ parameters.mcpServers or [] }}
-          additionalBuildSteps: ${{ steps['create-ee-definition'].output.additionalBuildSteps }}
-          tags: ${{ parameters.tags or [] }}
+          sourceControlProvider: ${{ parameters.sourceControlProvider }}
+          repositoryOwner: ${{ parameters.repositoryOwner }}
+          repositoryName: ${{ parameters.repositoryName }}
 
     # Step 3: Validate the SCM repository (optional)
     - id: prepare-publish
@@ -377,19 +365,26 @@ spec:
         eeFileName: ${{ parameters.eeFileName }}
         contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
 
-    # Step 4: Generate catalog-info file
-    - id: create-catalog-info
-      action: ansible:ee:create-catalog-info
-      name: Creating Catalog Info Component for the EE Definition
+    - id: create-catalog-info-file
+      action: catalog:write
+      if: ${{ parameters.publishToSCM }}
+      name: Create catalog component file for the EE Definition
       input:
-        componentName: ${{ parameters.eeFileName }}
-        description: ${{ parameters.templateDescription }}
-        tags: ${{ parameters.tags or [] }}
-        repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl or ''}}
-        contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
-        publishToSCM: ${{ parameters.publishToSCM }}
-        eeDefinitionContent: ${{ steps['create-ee-definition'].output.eeDefinitionContent }}
-        readmeContent: ${{ steps['create-ee-definition'].output.readmeContent }}
+        filePath: ${{ steps['create-ee-definition'].output.catalogInfoPath }}
+        entity:
+          apiVersion: backstage.io/v1alpha1
+          kind: Component
+          metadata:
+            name: ${{ parameters.eeFileName }}
+            description: ${{ parameters.templateDescription }}
+            tags: ${{ parameters.tags or [] }}
+            annotations:
+              backstage.io/techdocs-ref: dir:.
+              backstage.io/managed-by-location: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
+          spec:
+            type: execution-environment
+            owner: ${owner}
+            lifecycle: production
 
     # Step 5: Create and publish to a new GitHub Repository
     - id: publish-github
@@ -460,7 +455,7 @@ spec:
 
       - title: View details in catalog
         icon: catalog
-        entityRef: ${{ steps['register-catalog-component'].output.entityRef or steps['create-catalog-info'].output.generatedEntityRef }}
+        entityRef: ${{ steps['register-catalog-component'].output.entityRef or steps['create-ee-definition'].output.generatedEntityRef }}
 
     text:
       - title: Next Steps
