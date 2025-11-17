@@ -383,7 +383,7 @@ spec:
               backstage.io/managed-by-location: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
           spec:
             type: execution-environment
-            owner: ${owner}
+            owner: ${{ steps['create-ee-definition'].output.owner }}
             lifecycle: production
 
     # Step 5: Create and publish to a new GitHub Repository
@@ -455,11 +455,9 @@ spec:
 
       - title: View details in catalog
         icon: catalog
-        entityRef: ${{ steps['register-catalog-component'].output.entityRef or steps['create-ee-definition'].output.generatedEntityRef }}
+        url: ${{ steps['create-ee-definition'].output.generatedEntityRef }}
 
     text:
       - title: Next Steps
         content: |
-          ```md
           ${{ steps['create-ee-definition'].output.readmeContent }}
-          ```
