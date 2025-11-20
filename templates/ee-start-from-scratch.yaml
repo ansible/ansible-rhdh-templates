@@ -1,3 +1,4 @@
+---
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
@@ -391,6 +392,7 @@ spec:
             annotations:
               backstage.io/techdocs-ref: dir:.
               backstage.io/managed-by-location: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
+              ansible.io/scm-provider: ${{ parameters.sourceControlProvider }}
           spec:
             type: execution-environment
             owner: ${{ steps['create-ee-definition'].output.owner }}
