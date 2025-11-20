@@ -471,3 +471,4 @@ spec:
       - title: View details in catalog
         icon: catalog
         url: ${{ steps['create-ee-definition'].output.generatedEntityRef }}
+        if: ${{ not (steps['publish-github-pull-request'].output.remoteUrl or steps['publish-gitlab-merge-request'].output.mergeRequestUrl) }}
