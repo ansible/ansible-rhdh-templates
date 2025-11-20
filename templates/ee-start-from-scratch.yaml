@@ -198,9 +198,19 @@ spec:
             type: string
             title: MCP Server
             enum:
-              - Github
-              - AWS
+              - aws_ccapi_mcp
+              - aws_cdk_mcp
+              - aws_core_mcp
+              - aws_iam_mcp
+              - azure_mcp
+              - github_mcp
+            enumNames:
+              - AWS CCAPI
+              - AWS CDK
+              - AWS Core
+              - AWS IAM
               - Azure
+              - GitHub
           ui:field: MCPServersPicker
 
     # Step 4: Additional Build Steps
@@ -438,6 +448,11 @@ spec:
         optional: true
 
   output:
+    text:
+      - title: Getting Started
+        content: |
+          ${{ steps['create-ee-definition'].output.readmeContent }}
+
     links:
       - title: ${{ parameters.sourceControlProvider }} Repository
         url: ${{ steps['prepare-publish'].output.generatedFullRepoUrl }}
@@ -456,8 +471,3 @@ spec:
       - title: View details in catalog
         icon: catalog
         url: ${{ steps['create-ee-definition'].output.generatedEntityRef }}
-
-    text:
-      - title: Next Steps
-        content: |
-          ${{ steps['create-ee-definition'].output.readmeContent }}
