@@ -23,12 +23,12 @@ spec:
           type: string
           default: 'registry.access.redhat.com/ubi9/python-311:latest'
           enum:
-            - 'registry.access.redhat.com/ubi9/python-311:latest'
+            - 'registry.redhat.io/ansible-automation-platform-26/ee-minimal-rhel9:latest'
             - 'registry.redhat.io/ansible-automation-platform-25/ee-minimal-rhel9:latest'
             - 'custom'
           enumNames:
-            - 'Red Hat Universal Base Image 9 w/ Python 3.11 (Recommended)'
-            - 'Red Hat Ansible Minimal EE base (RHEL 9) (Requires subscription)'
+            - 'Red Hat Ansible Automation Platform 2.6 Minimal EE base (RHEL 9) (Recommended)'
+            - 'Red Hat Ansible Automation Platform 2.5 Minimal EE base (RHEL 9)'
             - 'Custom Image'
           ui:field: BaseImagePicker
       dependencies:
