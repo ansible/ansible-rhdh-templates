@@ -64,6 +64,7 @@ spec:
         popularCollections:
           title: Add Popular Collections
           type: array
+          default: ["ansible.posix", "community.general"]
           items:
             type: string
             enum:
@@ -290,11 +291,11 @@ spec:
               removable: true
             help: "Add one or more tags for the generated template."
         publishToSCM:
-          title: Publish to a SCM repository
-          description: Publish the EE definition file and template to a SCM repository.
+          title: Publish to a Git repository
+          description: Publish the generated files to a Git repository.
           type: boolean
           default: true
-          ui:help: "If unchecked, the EE definition file and template will not be pushed to a SCM repository. Regardless of your selection, you will get a link to download the files locally."
+          ui:help: "If unchecked, the generated files will not be pushed to a SCM repository. Regardless of your selection, you will get a link to download the files locally."
       required:
         - eeFileName
         - templateDescription
