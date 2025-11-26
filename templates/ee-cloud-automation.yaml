@@ -2,14 +2,14 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: ansible-execution-environment-builder-start-from-scratch
-  title: Start from scratch
-  description: Create Ansible Execution Environment definition file from scratch
+  name: ansible-execution-environment-builder-cloud-automation
+  title: Cloud Automation
+  description: Create Ansible Execution Environment definition file with essential collections for cloud automation.
   tags:
     - ansible
     - execution-environment
     - automation
-    - start-from-scratch
+    - cloud-automation
 spec:
   type: execution-environment
 
@@ -68,21 +68,16 @@ spec:
         popularCollections:
           title: Add Popular Collections
           type: array
+          default: ["amazon.aws", "amazon.ai", "azure.azcollection", "google.cloud"]
           items:
             type: string
             enum:
-              - 'community.general'
-              - 'ansible.posix'
-              - 'ansible.windows'
-              - 'ansible.utils'
               - 'amazon.aws'
+              - 'amazon.ai'
               - 'azure.azcollection'
               - 'google.cloud'
-              - 'amazon.ai'
-              - 'cisco.ios'
-              - 'cisco.nxos'
-              - 'arista.eos'
-              - 'cisco.iosxr'
+              - 'ansible.utils'
+              - 'community.general'
           uniqueItems: true
           ui:widget: checkboxes
           ui:options:
