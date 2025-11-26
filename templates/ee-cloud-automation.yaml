@@ -272,7 +272,7 @@ spec:
           description: |
             Description for the generated Execution Environment definition.
             This description is used when displaying the Execution Environment definition in the catalog.
-            Additionally, this description is also used in the Software Template that is generated with SCM-based publishing.
+            Additionally, this description is also used in the Software Template that is generated with Git-based publishing.
         tags:
           title: Tags
           description: |
@@ -294,7 +294,7 @@ spec:
           description: Publish the generated files to a Git repository.
           type: boolean
           default: true
-          ui:help: "If unchecked, the generated files will not be pushed to a SCM repository. Regardless of your selection, you will get a link to download the files locally."
+          ui:help: "If unchecked, the generated files will not be pushed to a Git repository. Regardless of your selection, you will get a link to download the files locally."
       required:
         - eeFileName
         - templateDescription
@@ -315,9 +315,9 @@ spec:
                     component: select
                     help: Select the source control provider to publish the EE definition files to.
                 repositoryOwner:
-                  title: SCM repository organization or username
+                  title: Git repository organization or username
                   type: string
-                  description: The organization or username that owns the SCM repository
+                  description: The organization or username that owns the Git repository
                 repositoryName:
                   title: Repository Name
                   type: string
