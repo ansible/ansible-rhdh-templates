@@ -2,14 +2,14 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: ansible-execution-environment-builder-start-from-scratch
-  title: Start from scratch
-  description: Create Ansible Execution Environment definition file from scratch
+  name: ansible-execution-environment-builder-network-automation
+  title: Network Automation
+  description: Create Ansible Execution Environment definition file for network device management with major vendors.
   tags:
     - ansible
     - execution-environment
     - automation
-    - start-from-scratch
+    - network-automation
 spec:
   type: execution-environment
 
@@ -68,21 +68,15 @@ spec:
         popularCollections:
           title: Add Popular Collections
           type: array
+          default: ["cisco.ios", "cisco.nxos", "cisco.iosxr", "arista.eos"]
           items:
             type: string
             enum:
-              - 'community.general'
-              - 'ansible.posix'
-              - 'ansible.windows'
-              - 'ansible.utils'
-              - 'amazon.aws'
-              - 'azure.azcollection'
-              - 'google.cloud'
-              - 'amazon.ai'
               - 'cisco.ios'
               - 'cisco.nxos'
-              - 'arista.eos'
               - 'cisco.iosxr'
+              - 'arista.eos'
+              - 'community.general'
           uniqueItems: true
           ui:widget: checkboxes
           ui:options:
