@@ -71,18 +71,10 @@ spec:
           items:
             type: string
             enum:
-              - 'community.general'
-              - 'ansible.posix'
-              - 'ansible.windows'
-              - 'ansible.utils'
-              - 'amazon.aws'
-              - 'azure.azcollection'
-              - 'google.cloud'
-              - 'amazon.ai'
-              - 'cisco.ios'
-              - 'cisco.nxos'
-              - 'arista.eos'
-              - 'cisco.iosxr'
+              - community.general
+              - ansible.posix
+              - ansible.windows
+              - ansible.utils
           uniqueItems: true
           ui:widget: checkboxes
           ui:options:
