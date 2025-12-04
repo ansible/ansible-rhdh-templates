@@ -32,6 +32,7 @@
           - "Log file path: {{ log_file_path }}"
           - "Include processes: {{ include_processes }}"
           - "Include network info: {{ include_network }}"
+          - "Playbook path: https://github.com/ansible/ansible-rhdh-templates/edit/testathon/playbooks/system_info_template.yml"
 
     - name: Gather basic system information
       debug:
