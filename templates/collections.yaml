@@ -112,8 +112,6 @@ spec:
       name: Publish
       action: publish:github
       input:
-        allowedHosts:
-          - ${{ parameters.sourceControl }}
         description: ${{ parameters.description }}
         repoUrl: ${{ steps.ansible.output.repoUrl }}
         repoVisibility: 'public'
