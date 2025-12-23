@@ -258,11 +258,10 @@ spec:
       description: Generate and publish the EE definition file and template.
       properties:
         eeFileName:
-          title: EE File Name
+          title: EE Definition Name
           type: string
-          description: Name of the Execution Environment file.
           ui:field: EEFileNamePicker
-          ui:help: "Specify the filename for the Execution Environment definition file."
+          ui:help: "Specify a name for the Execution Environment definition. This will also be used as the name of the EE definition file."
         templateDescription:
           title: Description
           type: string
