@@ -92,25 +92,23 @@ spec:
               name:
                 type: string
                 title: Collection Name
-                description: The name or source of the collection.
-                ui:placeholder: 'e.g., amazon.aws, https://github.com/ansible-collections/cisco.ios'
+                description: The name of the collection or an URL to a Git repository containing the collection. For example, 'amazon.aws', 'https://github.com/ansible-collections/cisco.ios.git'.
               version:
                 type: string
                 title: Version (Optional)
                 description: |
-                  The version of the collection to install.
+                  The version of the collection to install (e.g., 7.2.1).
                   If not specified, the latest version will be installed.
-                ui:placeholder: 'e.g., 7.2.1'
               source:
                 type: string
                 title: Source (Optional)
                 description: |
-                  The Galaxy URL to pull the collection from.
+                  The Automation Hub or Galaxy server URL to pull the collection from. For example, https://galaxy.ansible.com.
                   If type is 'file', 'dir', or 'subdirs', this should be a local path to the collection.
               type:
                 type: string
                 title: Type (Optional)
-                description: Determines the source of the collection.
+                description: Determines the source type of the collection. If type is omitted, the name is used to implicitly determine the source of the collection.
                 enum:
                   - 'file'
                   - 'galaxy'
@@ -259,11 +257,10 @@ spec:
       description: Generate and publish the EE definition file and template.
       properties:
         eeFileName:
-          title: EE File Name
+          title: EE Definition Name
           type: string
-          description: Name of the Execution Environment file.
           ui:field: EEFileNamePicker
-          ui:help: "Specify the filename for the Execution Environment definition file."
+          ui:help: "Specify a name for the Execution Environment definition. This will also be used as the name of the EE definition file."
         templateDescription:
           title: Description
           type: string
