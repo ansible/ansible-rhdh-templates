@@ -91,25 +91,23 @@ spec:
               name:
                 type: string
                 title: Collection Name
-                description: The name or source of the collection.
-                ui:placeholder: 'e.g., amazon.aws, https://github.com/ansible-collections/cisco.ios'
+                description: The name of the collection or an URL to a Git repository containing the collection. For example, 'amazon.aws', 'https://github.com/ansible-collections/cisco.ios.git'.
               version:
                 type: string
                 title: Version (Optional)
                 description: |
-                  The version of the collection to install.
+                  The version of the collection to install (e.g., 7.2.1).
                   If not specified, the latest version will be installed.
-                ui:placeholder: 'e.g., 7.2.1'
               source:
                 type: string
                 title: Source (Optional)
                 description: |
-                  The Galaxy URL to pull the collection from.
+                  The Automation Hub or Galaxy server URL to pull the collection from. For example, https://galaxy.ansible.com.
                   If type is 'file', 'dir', or 'subdirs', this should be a local path to the collection.
               type:
                 type: string
                 title: Type (Optional)
-                description: Determines the source of the collection.
+                description: Determines the source type of the collection. If type is omitted, the name is used to implicitly determine the source of the collection.
                 enum:
                   - 'file'
                   - 'galaxy'
