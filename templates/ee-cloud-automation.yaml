@@ -271,13 +271,14 @@ spec:
         tags:
           title: Tags
           description: |
-            Add tags to make this EE definition discoverable in the catalog.
-            The default execution-environment tag identifies this as an EE component; keeping it is highly recommended
+            Add tags to make this EE definition discoverable in the catalog. Tags must be 63 characters or less and can only contain lowercase letters, numbers, and hyphens.
+            The default execution-environment tag identifies this as an EE component; keeping it is highly recommended.
           type: array
           default:
             - 'execution-environment'
           items:
             type: string
+            pattern: '^(?=.{1,63}$)[a-z0-9+#]+(?:-[a-z0-9+#]+)*$'
           ui:
             options:
               addable: true
