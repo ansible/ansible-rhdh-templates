@@ -154,11 +154,11 @@ spec:
                     pythonRequirementsFile:
                       type: string
                       format: data-url
-                      title: Add Python requirements
+                      title: Pick a file with Python requirements
                       description: Upload a requirements.txt file with python package details
                       ui:field: FileUploadPicker
-                      ui:placeholder: Paste the full content of your requirements.txt file here. Alternatively, upload TXT file. Please verify formatting, as no syntax validation is applied.
-                      ui:buttonText: Upload requirements.txt file
+                      ui:placeholder: Paste the full content of your requirements.txt file here. Alternatively, upload a file. Please verify formatting, as no syntax validation is applied.
+                      ui:buttonText: Choose file
                     systemPackages:
                       title: Additional System Packages
                       type: array
@@ -177,8 +177,8 @@ spec:
                       title: Add system packages
                       description: Upload a bindep.txt file with system package details
                       ui:field: FileUploadPicker
-                      ui:placeholder: Paste the full content of your bindep.txt file here. Alternativly, upload TXT file. Please verify formatting, as no syntax validation is applied.
-                      ui:buttonText: Upload TXT file
+                      ui:placeholder: Paste the full content of your bindep.txt file here. Alternatively, upload a file. Please verify formatting, as no syntax validation is applied.
+                      ui:buttonText: Choose file
                 - properties:
                     specifyRequirements:
                       const: false
