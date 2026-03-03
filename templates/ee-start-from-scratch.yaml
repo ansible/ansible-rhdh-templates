@@ -112,123 +112,122 @@ spec:
           ui:field: CollectionsPicker
         advancedConfiguration:
           title: Advanced Configuration
-          ui:field: SectionHeader
-        specifyRequirements:
-          title: Customize additional Python requirements and System packages
-          type: boolean
-          default: false
-          ui:help: "Check this box to define additional Python or system dependencies to include in your EE."
-        addBuildSteps:
-          title: "Include additional build steps"
-          type: boolean
-          default: false
-          ui:help: "Check this box to add custom build steps that will be executed at specific points during the build process. These map to ansible-builder's additional_build_steps configuration (optional step)."
-      ui:order:
-        - collections
-        - advancedConfiguration
-        - specifyRequirements
-        - pythonRequirements
-        - pythonRequirementsFile
-        - systemPackages
-        - systemPackagesFile
-        - addBuildSteps
-        - additionalBuildSteps
-        - "*"
-      dependencies:
-        specifyRequirements:
-          oneOf:
-            - properties:
-                specifyRequirements:
-                  const: true
-                pythonRequirements:
-                  title: Additional Python Requirements
-                  type: array
-                  description: |
-                    Specify additional python packages that are required in addition to what the selected collections already specify as dependencies.
-                    Packages already specified in the collections as a dependency should not be repeated here.
-                  items:
-                    type: string
-                    title: Python package
-                    description: Python package (with optional version specification)
-                    ui:placeholder: 'e.g., requests>=2.28.0'
-                  ui:field: PackagesPicker
-                pythonRequirementsFile:
-                  type: string
-                  format: data-url
-                  title: Add Python requirements
-                  description: Upload a requirements.txt file with python package details
-                  ui:field: FileUploadPicker
-                  ui:placeholder: Paste the full content of your requirements.txt file here. Alternatively, upload TXT file. Please verify formatting, as no syntax validation is applied.
-                  ui:buttonText: Upload requirements.txt file
-                systemPackages:
-                  title: Additional System Packages
-                  type: array
-                  description: |
-                    Specify additional system-level packages that are required in addition to what the selected collections already specify as dependencies.
-                    Packages already specified in the collections as a dependency should not be repeated here.
-                  items:
-                    type: string
-                    title: System package
-                    description: System package
-                    ui:placeholder: 'e.g., libxml2-dev [platform:dpkg], libssh-devel [platform:rpm]'
-                  ui:field: PackagesPicker
-                systemPackagesFile:
-                  type: string
-                  format: data-url
-                  title: Add system packages
-                  description: Upload a bindep.txt file with system package details
-                  ui:field: FileUploadPicker
-                  ui:placeholder: Paste the full content of your bindep.txt file here. Alternativly, upload TXT file. Please verify formatting, as no syntax validation is applied.
-                  ui:buttonText: Upload TXT file
-            - properties:
-                specifyRequirements:
-                  const: false
-        addBuildSteps:
-          oneOf:
-            - properties:
-                addBuildSteps:
-                  const: true
-                additionalBuildSteps:
-                  title: Additional Build Steps
-                  type: array
-                  description: Add custom build steps that will be executed at specific points during the build process. These map to ansible-builder's additional_build_steps configuration.
-                  items:
-                    type: object
-                    properties:
-                      stepType:
-                        title: Step Type
+          type: object
+          ui:order:
+            - specifyRequirements
+            - pythonRequirements
+            - pythonRequirementsFile
+            - systemPackages
+            - systemPackagesFile
+            - addBuildSteps
+            - additionalBuildSteps
+            - "*"
+          properties:
+            specifyRequirements:
+              title: Customize additional Python requirements and System packages
+              type: boolean
+              default: false
+              ui:help: "Check this box to define additional Python or system dependencies to include in your EE."
+            addBuildSteps:
+              title: "Include additional build steps"
+              type: boolean
+              default: false
+              ui:help: "Check this box to add custom build steps that will be executed at specific points during the build process. These map to ansible-builder's additional_build_steps configuration (optional step)."
+          dependencies:
+            specifyRequirements:
+              oneOf:
+                - properties:
+                    specifyRequirements:
+                      const: true
+                    pythonRequirements:
+                      title: Additional Python Requirements
+                      type: array
+                      description: |
+                        Specify additional python packages that are required in addition to what the selected collections already specify as dependencies.
+                        Packages already specified in the collections as a dependency should not be repeated here.
+                      items:
                         type: string
-                        description: When this build step should execute
-                        enum:
-                          - 'prepend_base'
-                          - 'append_base'
-                          - 'prepend_galaxy'
-                          - 'append_galaxy'
-                          - 'prepend_builder'
-                          - 'append_builder'
-                          - 'prepend_final'
-                          - 'append_final'
-                        enumNames:
-                          - 'Prepend Base - Before base image dependencies'
-                          - 'Append Base - After base image dependencies'
-                          - 'Prepend Galaxy - Before Ansible collections'
-                          - 'Append Galaxy - After Ansible collections'
-                          - 'Prepend Builder - Before main build steps'
-                          - 'Append Builder - After main build steps'
-                          - 'Prepend Final - Before final image steps'
-                          - 'Append Final - After final image steps'
-                        default: 'prepend_base'
-                      commands:
-                        title: Commands
-                        type: array
-                        description: List of commands to execute
-                        items:
-                          type: string
-                    required: ['stepType', 'commands']
-                  ui:field: AdditionalBuildStepsPicker
-            - properties:
-                addBuildSteps:
-                  const: false
+                        title: Python package
+                        description: Python package (with optional version specification)
+                        ui:placeholder: 'e.g., requests>=2.28.0'
+                      ui:field: PackagesPicker
+                    pythonRequirementsFile:
+                      type: string
+                      format: data-url
+                      title: Add Python requirements
+                      description: Upload a requirements.txt file with python package details
+                      ui:field: FileUploadPicker
+                      ui:placeholder: Paste the full content of your requirements.txt file here. Alternatively, upload TXT file. Please verify formatting, as no syntax validation is applied.
+                      ui:buttonText: Upload requirements.txt file
+                    systemPackages:
+                      title: Additional System Packages
+                      type: array
+                      description: |
+                        Specify additional system-level packages that are required in addition to what the selected collections already specify as dependencies.
+                        Packages already specified in the collections as a dependency should not be repeated here.
+                      items:
+                        type: string
+                        title: System package
+                        description: System package
+                        ui:placeholder: 'e.g., libxml2-dev [platform:dpkg], libssh-devel [platform:rpm]'
+                      ui:field: PackagesPicker
+                    systemPackagesFile:
+                      type: string
+                      format: data-url
+                      title: Add system packages
+                      description: Upload a bindep.txt file with system package details
+                      ui:field: FileUploadPicker
+                      ui:placeholder: Paste the full content of your bindep.txt file here. Alternativly, upload TXT file. Please verify formatting, as no syntax validation is applied.
+                      ui:buttonText: Upload TXT file
+                - properties:
+                    specifyRequirements:
+                      const: false
+            addBuildSteps:
+              oneOf:
+                - properties:
+                    addBuildSteps:
+                      const: true
+                    additionalBuildSteps:
+                      title: Additional Build Steps
+                      type: array
+                      description: Add custom build steps that will be executed at specific points during the build process. These map to ansible-builder's additional_build_steps configuration.
+                      items:
+                        type: object
+                        properties:
+                          stepType:
+                            title: Step Type
+                            type: string
+                            description: When this build step should execute
+                            enum:
+                              - 'prepend_base'
+                              - 'append_base'
+                              - 'prepend_galaxy'
+                              - 'append_galaxy'
+                              - 'prepend_builder'
+                              - 'append_builder'
+                              - 'prepend_final'
+                              - 'append_final'
+                            enumNames:
+                              - 'Prepend Base - Before base image dependencies'
+                              - 'Append Base - After base image dependencies'
+                              - 'Prepend Galaxy - Before Ansible collections'
+                              - 'Append Galaxy - After Ansible collections'
+                              - 'Prepend Builder - Before main build steps'
+                              - 'Append Builder - After main build steps'
+                              - 'Prepend Final - Before final image steps'
+                              - 'Append Final - After final image steps'
+                            default: 'prepend_base'
+                          commands:
+                            title: Commands
+                            type: array
+                            description: List of commands to execute
+                            items:
+                              type: string
+                        required: ['stepType', 'commands']
+                      ui:field: AdditionalBuildStepsPicker
+                - properties:
+                    addBuildSteps:
+                      const: false
 
     # Step 3: Repository Configuration
     - title: Generate and publish
@@ -327,12 +326,12 @@ spec:
           popularCollections: ${{ parameters.popularCollections or [] }}
           collections: ${{ parameters.collections or [] }}
           collectionsFile: ${{ parameters.collectionsFile or [] }}
-          pythonRequirements: ${{ parameters.pythonRequirements or [] }}
-          pythonRequirementsFile: ${{ parameters.pythonRequirementsFile or [] }}
-          systemPackages: ${{ parameters.systemPackages or [] }}
-          systemPackagesFile: ${{ parameters.systemPackagesFile or [] }}
+          pythonRequirements: ${{ parameters.advancedConfiguration.pythonRequirements or [] }}
+          pythonRequirementsFile: ${{ parameters.advancedConfiguration.pythonRequirementsFile or [] }}
+          systemPackages: ${{ parameters.advancedConfiguration.systemPackages or [] }}
+          systemPackagesFile: ${{ parameters.advancedConfiguration.systemPackagesFile or [] }}
           mcpServers: ${{ parameters.mcpServers or [] }}
-          additionalBuildSteps: ${{ parameters.additionalBuildSteps or [] }}
+          additionalBuildSteps: ${{ parameters.advancedConfiguration.additionalBuildSteps or [] }}
           sourceControlProvider: ${{ parameters.sourceControlProvider }}
           repositoryOwner: ${{ parameters.repositoryOwner }}
           repositoryName: ${{ parameters.repositoryName }}
