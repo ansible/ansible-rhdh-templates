@@ -69,6 +69,8 @@ spec:
           title: Collections
           type: array
           description: Add collections to be included in your execution environment definition file (optional).
+          default:
+            - name: ansible.posix
           items:
             type: object
             properties:
@@ -76,7 +78,6 @@ spec:
                 type: string
                 title: Collection Name
                 description: The name of the collection or an URL to a Git repository containing the collection. For example, 'amazon.aws', 'https://github.com/ansible-collections/cisco.ios.git'.
-                default: 'ansible.posix'
               version:
                 type: string
                 title: Version (Optional)
