@@ -71,6 +71,8 @@ spec:
           description: Add collections to be included in your execution environment definition file (optional).
           default:
             - name: ansible.mcp_builder
+              source: "Private Automation Hub / validated"
+              version: "1.0.3"
           items:
             type: object
             properties:
