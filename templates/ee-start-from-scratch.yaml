@@ -253,6 +253,8 @@ spec:
           type: array
           default:
             - 'execution-environment'
+            - 'ansible'
+            - 'automation'
           items:
             type: string
           ui:
