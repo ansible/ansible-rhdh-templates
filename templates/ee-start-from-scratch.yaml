@@ -69,46 +69,6 @@ spec:
           title: Collections
           type: array
           description: Add collections to be included in your execution environment definition file (optional).
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                title: Collection Name
-                description: The name of the collection or an URL to a Git repository containing the collection. For example, 'amazon.aws', 'https://github.com/ansible-collections/cisco.ios.git'.
-              version:
-                type: string
-                title: Version (Optional)
-                description: |
-                  The version of the collection to install (e.g., 7.2.1).
-                  If not specified, the latest version will be installed.
-              source:
-                type: string
-                title: Source (Optional)
-                description: |
-                  The Automation Hub or Galaxy server URL to pull the collection from. For example, https://galaxy.ansible.com.
-                  If type is 'file', 'dir', or 'subdirs', this should be a local path to the collection.
-              type:
-                type: string
-                title: Type (Optional)
-                description: Determines the source type of the collection. If type is omitted, the name is used to implicitly determine the source of the collection.
-                enum:
-                  - 'file'
-                  - 'galaxy'
-                  - 'git'
-                  - 'url'
-                  - 'dir'
-                  - 'subdirs'
-              signatures:
-                type: array
-                title: Signatures (Optional)
-                description: |
-                  A list of signature sources that are used to supplement those found on the Galaxy server during collection installation and ansible-galaxy collection verify.
-                  Signature sources should be URIs that contain the detached signature.
-                items:
-                  type: string
-                  title: Signature
-                  description: URI of the signature file
           ui:field: CollectionsPicker
         advancedConfiguration:
           title: Advanced Configuration
@@ -230,7 +190,7 @@ spec:
                       const: false
 
     # Step 3: Repository Configuration
-    - title: Generate and publish
+    - title: Destination and Build
       description: Generate and publish the EE definition file and template.
       properties:
         eeFileName:
@@ -262,53 +222,108 @@ spec:
               orderable: true
               removable: true
             help: "Add one or more tags for the generated template."
-        publishToSCM:
-          title: Publish to a Git repository
-          description: Publish the generated files to a Git repository.
-          type: boolean
-          default: true
-          ui:help: "If unchecked, the generated files will not be pushed to a Git repository. Regardless of your selection, you will get a link to download the files locally."
+        publishAndBuild:
+          title: Publish and Build
+          type: object
+          properties:
+            publishToSCM:
+              title: Publish to a Git repository
+              type: boolean
+              default: true
+              ui:help: "If unchecked, the generated files will not be pushed to a Git repository and you will get a link to download the files locally."
+          dependencies:
+            publishToSCM:
+              oneOf:
+                - properties:
+                    publishToSCM:
+                      const: true
+                    sourceControlProvider:
+                      title: Select source control provider
+                      description: Choose your source control provider
+                      type: string
+                      enum:
+                        - Github
+                        - Gitlab
+                      ui:
+                        component: select
+                        help: Select the source control provider to publish the EE definition files to.
+                    repositoryOwner:
+                      title: Git organization or username
+                      type: string
+                      description: The organization or username that owns the Git repository
+                    repositoryName:
+                      title: Target Repository Name
+                      type: string
+                      description: Specify the name of the repository where the EE definition files will be published.
+                    createNewRepository:
+                      title: Create new repository
+                      type: boolean
+                      description: Create a new repository, if the specified one does not exist.
+                      default: false
+                      ui:help: "If unchecked, a new repository will not be created if the specified one does not exist. The generated files will not be published to a repository."
+                  required:
+                    - sourceControlProvider
+                    - repositoryOwner
+                    - repositoryName
+                    - createNewRepository
+                  dependencies:
+                    sourceControlProvider:
+                      oneOf:
+                        - properties:
+                            sourceControlProvider:
+                              const: Github
+                            buildExecutionEnvironment:
+                              title: Build Execution Environment
+                              description: Trigger a build of the Execution Environment after publishing.
+                              type: boolean
+                              default: false
+                              ui:help: "If checked, the Execution Environment will be built and pushed to the selected container registry."
+                          dependencies:
+                            buildExecutionEnvironment:
+                              oneOf:
+                                - properties:
+                                    buildExecutionEnvironment:
+                                      const: true
+                                    buildRegistry:
+                                      title: Registry
+                                      description: Container registry to push the built EE image to.
+                                      type: string
+                                      default: 'Private Automation Hub (PAH)'
+                                      enum:
+                                        - 'Private Automation Hub (PAH)'
+                                        - 'ghcr.io'
+                                      ui:
+                                        component: select
+                                        help: Select the container registry where the built image will be pushed.
+                                    buildImageName:
+                                      title: Image Name
+                                      type: string
+                                      description: Name for the built Execution Environment image in namespace/name format. For example, 'my-namespace/my-custom-ee'.
+                                    buildImageTag:
+                                      title: Image Tag
+                                      type: string
+                                      description: Tag for the built Execution Environment image.
+                                    registryTlsVerify:
+                                      title: Verify TLS certificates
+                                      type: boolean
+                                      default: true
+                                      description: Verify TLS certificates when interacting with container registries.
+                                      ui:help: "Uncheck to disable TLS verification for registries using self-signed or untrusted certificates."
+                                  required:
+                                    - buildRegistry
+                                    - buildImageName
+                                - properties:
+                                    buildExecutionEnvironment:
+                                      const: false
+                        - properties:
+                            sourceControlProvider:
+                              const: Gitlab
+                - properties:
+                    publishToSCM:
+                      const: false
       required:
         - eeFileName
         - templateDescription
-      dependencies:
-        publishToSCM:
-          oneOf:
-            - properties:
-                publishToSCM:
-                  const: true
-                sourceControlProvider:
-                  title: Select source control provider
-                  description: Choose your source control provider
-                  type: string
-                  enum:
-                    - Github
-                    - Gitlab
-                  ui:
-                    component: select
-                    help: Select the source control provider to publish the EE definition files to.
-                repositoryOwner:
-                  title: Git repository organization or username
-                  type: string
-                  description: The organization or username that owns the Git repository
-                repositoryName:
-                  title: Repository Name
-                  type: string
-                  description: Specify the name of the repository where the EE definition files will be published.
-                createNewRepository:
-                  title: Create new repository
-                  type: boolean
-                  description: Create a new repository, if the specified one does not exist.
-                  default: false
-                  ui:help: "If unchecked, a new repository will not be created if the specified one does not exist. The generated files will not be published to a repository."
-              required:
-                - sourceControlProvider
-                - repositoryOwner
-                - repositoryName
-                - createNewRepository
-            - properties:
-                publishToSCM:
-                  const: false
 
   steps:
     # Step 1: Create EE definition files
@@ -320,38 +335,36 @@ spec:
           eeFileName: ${{ parameters.eeFileName }}
           eeDescription: ${{ parameters.templateDescription }}
           tags: ${{ parameters.tags or [] }}
-          publishToSCM: ${{ parameters.publishToSCM }}
+          publishToSCM: ${{ parameters.publishAndBuild.publishToSCM }}
           baseImage: ${{ parameters.baseImage === 'custom' and parameters.customBaseImage or parameters.baseImage }}
           customBaseImage: ${{ parameters.customBaseImage or '' }}
-          popularCollections: ${{ parameters.popularCollections or [] }}
           collections: ${{ parameters.collections or [] }}
-          collectionsFile: ${{ parameters.collectionsFile or [] }}
           pythonRequirements: ${{ parameters.advancedConfiguration.pythonRequirements or [] }}
           pythonRequirementsFile: ${{ parameters.advancedConfiguration.pythonRequirementsFile or [] }}
           systemPackages: ${{ parameters.advancedConfiguration.systemPackages or [] }}
           systemPackagesFile: ${{ parameters.advancedConfiguration.systemPackagesFile or [] }}
-          mcpServers: ${{ parameters.mcpServers or [] }}
           additionalBuildSteps: ${{ parameters.advancedConfiguration.additionalBuildSteps or [] }}
-          sourceControlProvider: ${{ parameters.sourceControlProvider }}
-          repositoryOwner: ${{ parameters.repositoryOwner }}
-          repositoryName: ${{ parameters.repositoryName }}
+          buildRegistry: ${{ parameters.publishAndBuild.buildRegistry or '' }}
+          buildImageName: ${{ parameters.publishAndBuild.buildImageName or '' }}
+          buildImageTag: ${{ parameters.publishAndBuild.buildImageTag or '' }}
+          registryTlsVerify: ${{ parameters.publishAndBuild.registryTlsVerify }}
 
     # Step 3: Validate the SCM repository (optional)
     - id: prepare-publish
       action: ansible:prepare:publish
       name: Prepare for publishing
-      if: ${{ parameters.publishToSCM }}
+      if: ${{ parameters.publishAndBuild.publishToSCM }}
       input:
-        sourceControlProvider: ${{ parameters.sourceControlProvider }}
-        repositoryOwner: ${{ parameters.repositoryOwner }}
-        repositoryName: ${{ parameters.repositoryName }}
-        createNewRepository: ${{ parameters.createNewRepository }}
+        sourceControlProvider: ${{ parameters.publishAndBuild.sourceControlProvider }}
+        repositoryOwner: ${{ parameters.publishAndBuild.repositoryOwner }}
+        repositoryName: ${{ parameters.publishAndBuild.repositoryName }}
+        createNewRepository: ${{ parameters.publishAndBuild.createNewRepository }}
         eeFileName: ${{ parameters.eeFileName }}
         contextDirName: ${{ steps['create-ee-definition'].output.contextDirName }}
 
     - id: create-catalog-info-file
       action: catalog:write
-      if: ${{ parameters.publishToSCM }}
+      if: ${{ parameters.publishAndBuild.publishToSCM }}
       name: Create catalog component file for the EE Definition
       input:
         filePath: ${{ steps['create-ee-definition'].output.catalogInfoPath }}
@@ -365,7 +378,7 @@ spec:
             annotations:
               backstage.io/techdocs-ref: dir:.
               backstage.io/managed-by-location: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
-              ansible.io/scm-provider: ${{ parameters.sourceControlProvider }}
+              ansible.io/scm-provider: ${{ parameters.publishAndBuild.sourceControlProvider }}
           spec:
             type: execution-environment
             owner: ${{ steps['create-ee-definition'].output.owner }}
@@ -375,7 +388,7 @@ spec:
     - id: publish-github
       name: Create and publish to a new GitHub Repository
       action: publish:github
-      if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
+      if: ${{ (parameters.publishAndBuild.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Github') }}
       input:
         description: ${{ parameters.templateDescription }}
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
@@ -386,7 +399,7 @@ spec:
     - id: publish-gitlab
       name: Create and publish to a new GitLab Repository
       action: publish:gitlab
-      if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and parameters.sourceControlProvider == 'Gitlab' }}
+      if: ${{ (parameters.publishAndBuild.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Gitlab') }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         defaultBranch: 'main'
@@ -396,7 +409,7 @@ spec:
     - id: publish-github-pull-request
       name: Publish generated files as a Github Pull Request
       action: publish:github:pull-request
-      if: ${{ parameters.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
+      if: ${{ parameters.publishAndBuild.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Github') }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         branchName: ${{ steps['prepare-publish'].output.generatedBranchName }}
@@ -407,7 +420,7 @@ spec:
     - id: publish-gitlab-merge-request
       name: Publish generated files as a Gitlab Merge Request
       action: publish:gitlab:merge-request
-      if: ${{ parameters.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Gitlab') }}
+      if: ${{ parameters.publishAndBuild.publishToSCM and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Gitlab') }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         branchName: ${{ steps['prepare-publish'].output.generatedBranchName }}
@@ -417,10 +430,18 @@ spec:
     - id: register-catalog-component
       name: Register published EE as a Catalog Component
       action: catalog:register
-      if: ${{ parameters.publishToSCM }}
+      if: ${{ parameters.publishAndBuild.publishToSCM }}
       input:
         catalogInfoUrl: ${{ steps['prepare-publish'].output.generatedCatalogInfoUrl }}
         optional: true
+    
+    - action: github:actions:dispatch
+      name: Start EE Build Workflow
+      if: ${{ parameters.publishAndBuild.buildExecutionEnvironment and (steps['prepare-publish'].output.createNewRepo) }}
+      input:
+        repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
+        workflowId: ee-build.yml
+        branchOrTagName: main
 
   output:
     text:
@@ -429,19 +450,19 @@ spec:
           ${{ steps['create-ee-definition'].output.readmeContent }}
 
     links:
-      - title: ${{ parameters.sourceControlProvider }} Repository
+      - title: ${{ parameters.publishAndBuild.sourceControlProvider }} Repository
         url: ${{ steps['prepare-publish'].output.generatedFullRepoUrl }}
-        if: ${{ (parameters.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) }}
-        icon: ${{ parameters.sourceControlProvider | lower }}
+        if: ${{ (parameters.publishAndBuild.publishToSCM) and (steps['prepare-publish'].output.createNewRepo) }}
+        icon: ${{ parameters.publishAndBuild.sourceControlProvider | lower }}
 
       - title: GitHub Pull Request
         url: ${{ steps['publish-github-pull-request'].output.remoteUrl }}
-        if: ${{ (parameters.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Github') }}
+        if: ${{ (parameters.publishAndBuild.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Github') }}
         icon: github
 
       - title: GitLab Merge Request
         url: ${{ steps['publish-gitlab-merge-request'].output.mergeRequestUrl	}}
-        if: ${{ (parameters.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.sourceControlProvider == 'Gitlab') }}
+        if: ${{ (parameters.publishAndBuild.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Gitlab') }}
 
       - title: View details in catalog
         icon: catalog
