@@ -69,7 +69,12 @@ spec:
           title: Collections
           type: array
           description: Add collections to be included in your execution environment definition file (optional).
-          default: ['cisco.ios', 'cisco.nxos', 'cisco.iosxr', 'arista.eos', 'community.general']
+          default:
+            - name: "cisco.ios"
+            - name: "cisco.nxos"
+            - name: "cisco.iosxr"
+            - name: "arista.eos"
+            - name: "community.general"
           ui:field: CollectionsPicker
         advancedConfiguration:
           title: Advanced Configuration
