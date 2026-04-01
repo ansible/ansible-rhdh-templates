@@ -69,6 +69,11 @@ spec:
           title: Collections
           type: array
           description: Add collections to be included in your execution environment definition file (optional).
+          default:
+            - name: "amazon.aws"
+            - name: "amazon.ai"
+            - name: "azure.azcollection"
+            - name: "google.cloud"
           ui:field: CollectionsPicker
         advancedConfiguration:
           title: Advanced Configuration
