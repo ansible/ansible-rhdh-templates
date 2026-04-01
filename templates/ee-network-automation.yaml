@@ -297,27 +297,56 @@ spec:
                                       default: 'Private Automation Hub (PAH)'
                                       enum:
                                         - 'Private Automation Hub (PAH)'
-                                        - 'ghcr.io'
-                                      ui:
-                                        component: select
-                                        help: Select the container registry where the built image will be pushed.
-                                    buildImageName:
-                                      title: Image Name
-                                      type: string
-                                      description: Name for the built Execution Environment image in namespace/name format. For example, 'my-namespace/my-custom-ee'.
-                                    buildImageTag:
-                                      title: Image Tag
-                                      type: string
-                                      description: Tag for the built Execution Environment image.
-                                    registryTlsVerify:
-                                      title: Verify TLS certificates
-                                      type: boolean
-                                      default: true
-                                      description: Verify TLS certificates when interacting with container registries.
-                                      ui:help: "Uncheck to disable TLS verification for registries using self-signed or untrusted certificates."
+                                        - 'Custom Registry'
+                                      ui:widget: select
+                                      ui:help: Select the container registry where the built image will be pushed.
                                   required:
                                     - buildRegistry
                                     - buildImageName
+                                  dependencies:
+                                    buildRegistry:
+                                      oneOf:
+                                        - properties:
+                                            buildRegistry:
+                                              const: 'Private Automation Hub (PAH)'
+                                            buildImageName:
+                                              title: Image Name
+                                              type: string
+                                              description: Name for the built Execution Environment image in namespace/name format. For example, 'my-namespace/my-custom-ee'.
+                                            buildImageTag:
+                                              title: Image Tag
+                                              type: string
+                                              description: Tag for the built Execution Environment image.
+                                            registryTlsVerify:
+                                              title: Verify TLS certificates
+                                              type: boolean
+                                              default: true
+                                              description: Verify TLS certificates when interacting with container registries.
+                                              ui:help: "Uncheck to disable TLS verification for registries using self-signed or untrusted certificates."
+                                        - properties:
+                                            buildRegistry:
+                                              const: 'Custom Registry'
+                                            customRegistryUrl:
+                                              title: Custom Registry URL
+                                              type: string
+                                              description: URL of the custom container registry (e.g., quay.io, docker.io).
+                                              ui:help: "Provide the full URL of the container registry."
+                                            buildImageName:
+                                              title: Image Name
+                                              type: string
+                                              description: Name for the built Execution Environment image in namespace/name format. For example, 'my-namespace/my-custom-ee'.
+                                            buildImageTag:
+                                              title: Image Tag
+                                              type: string
+                                              description: Tag for the built Execution Environment image.
+                                            registryTlsVerify:
+                                              title: Verify TLS certificates
+                                              type: boolean
+                                              default: true
+                                              description: Verify TLS certificates when interacting with container registries.
+                                              ui:help: "Uncheck to disable TLS verification for registries using self-signed or untrusted certificates."
+                                          required:
+                                            - customRegistryUrl
                                 - properties:
                                     buildExecutionEnvironment:
                                       const: false
@@ -350,7 +379,7 @@ spec:
           systemPackages: ${{ parameters.advancedConfiguration.systemPackages or [] }}
           systemPackagesFile: ${{ parameters.advancedConfiguration.systemPackagesFile or [] }}
           additionalBuildSteps: ${{ parameters.advancedConfiguration.additionalBuildSteps or [] }}
-          buildRegistry: ${{ parameters.publishAndBuild.buildRegistry or '' }}
+          buildRegistry: ${{ parameters.publishAndBuild.buildRegistry === 'Custom Registry' and parameters.publishAndBuild.customRegistryUrl or parameters.publishAndBuild.buildRegistry or '' }}
           buildImageName: ${{ parameters.publishAndBuild.buildImageName or '' }}
           buildImageTag: ${{ parameters.publishAndBuild.buildImageTag or '' }}
           registryTlsVerify: ${{ parameters.publishAndBuild.registryTlsVerify }}
@@ -441,13 +470,17 @@ spec:
         catalogInfoUrl: ${{ steps['prepare-publish'].output.generatedCatalogInfoUrl }}
         optional: true
     
-    - action: github:actions:dispatch
+    - id: dispatch-ee-build
+      action: github:actions:dispatch
       name: Start EE Build Workflow
-      if: ${{ parameters.publishAndBuild.buildExecutionEnvironment and (steps['prepare-publish'].output.createNewRepo) }}
+      if: ${{ parameters.publishAndBuild.buildExecutionEnvironment }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         workflowId: ee-build.yml
-        branchOrTagName: main
+        branchOrTagName: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
+        workflowInputs:
+          image_build_tag: ${{ parameters.publishAndBuild.buildImageTag or '' }}
+
 
   output:
     text:
@@ -466,9 +499,15 @@ spec:
         if: ${{ (parameters.publishAndBuild.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Github') }}
         icon: github
 
+      - title: ${{ parameters.publishAndBuild.sourceControlProvider }} EE Build Workflow Run
+        url: "https://${{ steps['prepare-publish'].output.normalizedRepoUrl }}/actions/workflows/ee-build.yml"
+        if: ${{ parameters.publishAndBuild.buildExecutionEnvironment }}
+        icon: github
+
       - title: GitLab Merge Request
         url: ${{ steps['publish-gitlab-merge-request'].output.mergeRequestUrl	}}
         if: ${{ (parameters.publishAndBuild.publishToSCM) and (not steps['prepare-publish'].output.createNewRepo) and (parameters.publishAndBuild.sourceControlProvider == 'Gitlab') }}
+
 
       - title: View details in catalog
         icon: catalog
