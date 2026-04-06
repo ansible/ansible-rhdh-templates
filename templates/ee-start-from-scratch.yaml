@@ -511,7 +511,7 @@ spec:
 
       - title: ${{ parameters.publishAndBuild.sourceControlProvider }} EE Build Workflow Run
         url: "https://${{ steps['prepare-publish'].output.normalizedRepoUrl }}/actions/workflows/ee-build.yml"
-        if: ${{ parameters.publishAndBuild.buildExecutionEnvironment }}
+        if: ${{ (parameters.publishAndBuild.buildExecutionEnvironment == true) }}
         icon: github
 
       - title: GitLab Merge Request
