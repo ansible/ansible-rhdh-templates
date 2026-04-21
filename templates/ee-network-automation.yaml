@@ -315,7 +315,7 @@ spec:
                                             registryTlsVerify:
                                               title: Verify TLS certificates
                                               type: boolean
-                                              default: false
+                                              default: true
                                               description: Verify TLS certificates when interacting with container registries.
                                               ui:help: "Uncheck to disable TLS verification for registries using self-signed or untrusted certificates."
                                         - properties:
