@@ -411,6 +411,37 @@ spec:
             owner: ${{ steps['create-ee-definition'].output.owner }}
             lifecycle: production
 
+    - id: create-repo-catalog-info
+      action: catalog:write
+      name: Create catalog component file for the Git Repository
+      if: ${{ parameters.publishAndBuild.publishToSCM }}
+      input:
+        filePath: catalog-info.yaml
+        entity:
+          apiVersion: backstage.io/v1alpha1
+          kind: Component
+          metadata:
+            name: ${{ parameters.publishAndBuild.sourceControlProvider.repoName }}
+            title: ${{ parameters.publishAndBuild.sourceControlProvider.repoName }}
+            description: Git repository containing Ansible Execution Environment definitions
+            tags:
+              - git-repository
+              - ${{ parameters.publishAndBuild.sourceControlProvider.repoName | lower }}
+              - ansible-ee-source
+            annotations:
+              backstage.io/managed-by-location: ${{ steps['prepare-publish'].output.normalizedRepoUrl }}
+              ansible.io/scm-provider: ${{ parameters.publishAndBuild.sourceControlProvider.provider }}
+              ansible.io/scm-organization: ${{ parameters.publishAndBuild.sourceControlProvider.org }}
+              ansible.io/scm-repository: ${{ parameters.publishAndBuild.sourceControlProvider.repoName }}
+          spec:
+            type: git-repository
+            lifecycle: production
+            owner: ${{ steps['create-ee-definition'].output.owner }}
+            dependsOn:
+              - component:default/${{ parameters.eeFileName }}
+            repository_ee_count: 1 # how can we update this depending upon the number of EEs published to a repo?
+            repository_default_branch: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
+
     # Step 5: Create and publish to a new GitHub Repository
     - id: publish-github
       name: Create and publish to a new GitHub Repository
@@ -464,6 +495,14 @@ spec:
       if: ${{ parameters.publishAndBuild.publishToSCM }}
       input:
         catalogInfoUrl: ${{ steps['prepare-publish'].output.generatedCatalogInfoUrl }}
+        optional: true
+
+    - id: register-repo-catalog-component
+      name: Register Git Repository as a Catalog Component
+      action: catalog:register
+      if: ${{ parameters.publishAndBuild.publishToSCM }}
+      input:
+        catalogInfoUrl: "${{ ('https://' + steps['prepare-publish'].output.normalizedRepoUrl + '/blob/main/catalog-info.yaml') if (parameters.publishAndBuild.sourceControlProvider.provider == 'github') else ('https://' + steps['prepare-publish'].output.normalizedRepoUrl + '/-/blob/main/catalog-info.yaml') }}"
         optional: true
 
     - id: dispatch-ee-build
