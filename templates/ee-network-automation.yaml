@@ -71,10 +71,15 @@ spec:
           description: Add collections to be included in your execution environment definition file (optional).
           default:
             - name: "cisco.ios"
+              source: "Private Automation Hub / rh-certified"
             - name: "cisco.nxos"
+              source: "Private Automation Hub / rh-certified"
             - name: "cisco.iosxr"
+              source: "Private Automation Hub / rh-certified"
             - name: "arista.eos"
+              source: "Private Automation Hub / rh-certified"
             - name: "community.general"
+              source: "Private Automation Hub / community"
           ui:field: CollectionsPicker
         advancedConfiguration:
           title: Advanced Configuration
