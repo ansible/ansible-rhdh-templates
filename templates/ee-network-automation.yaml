@@ -303,6 +303,7 @@ spec:
                                   required:
                                     - buildRegistry
                                     - buildImageName
+                                    - buildImageTag
                                   dependencies:
                                     buildRegistry:
                                       oneOf:
