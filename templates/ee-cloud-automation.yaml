@@ -568,7 +568,7 @@ spec:
       if: ${{ parameters.publishAndBuild.buildExecutionEnvironment and parameters.publishAndBuild.sourceControlProvider.provider == 'gitlab' }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
-        projectId: ${{ steps['publish-gitlab'].output.projectId or steps['publish-gitlab-merge-request'].output.projectid }}
+        projectId: ${{ (steps['publish-gitlab'].output.projectId or steps['publish-gitlab-merge-request'].output.projectid) | int }}
         tokenDescription: "EE Build Pipeline Trigger"
         branch: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
         token: ${{ secrets.USER_OAUTH_TOKEN }}
