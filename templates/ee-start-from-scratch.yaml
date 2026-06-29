@@ -550,7 +550,7 @@ spec:
         workflowId: ee-build.yml
         branchOrTagName: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
         workflowInputs:
-          image_build_tag: ${{ parameters.publishAndBuild.buildImageTag or '' }}
+          ee_image_build_tag: ${{ parameters.publishAndBuild.buildImageTag or '' }}
         token: ${{ secrets.USER_OAUTH_TOKEN }}
 
     - id: dispatch-ee-build-gitlab
