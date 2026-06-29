@@ -575,7 +575,7 @@ spec:
         branch: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
         token: ${{ secrets.USER_OAUTH_TOKEN }}
         variables:
-          IMAGE_BUILD_TAG: ${{ parameters.publishAndBuild.buildImageTag or '' }}
+          EE_IMAGE_BUILD_TAG: ${{ parameters.publishAndBuild.buildImageTag or '' }}
 
   output:
     text:
