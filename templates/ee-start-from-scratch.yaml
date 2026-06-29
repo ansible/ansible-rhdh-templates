@@ -563,6 +563,8 @@ spec:
         tokenDescription: "EE Build Pipeline Trigger"
         branch: ${{ steps['prepare-publish'].output.generatedBranchName or 'main' }}
         token: ${{ secrets.USER_OAUTH_TOKEN }}
+        variables:
+          IMAGE_BUILD_TAG: ${{ parameters.publishAndBuild.buildImageTag or '' }}
 
   output:
     text:
