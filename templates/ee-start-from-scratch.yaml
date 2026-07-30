@@ -544,7 +544,7 @@ spec:
     - id: dispatch-ee-build
       action: github:actions:dispatch
       name: Start EE Build Workflow
-      if: ${{ parameters.publishAndBuild.buildExecutionEnvironment and parameters.publishAndBuild.sourceControlProvider.provider == 'github' }}
+      if: ${{ parameters.publishAndBuild.publishToSCM and parameters.publishAndBuild.buildExecutionEnvironment and parameters.publishAndBuild.sourceControlProvider.provider == 'github' }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         workflowId: ee-build.yml
@@ -556,7 +556,7 @@ spec:
     - id: dispatch-ee-build-gitlab
       action: gitlab:pipeline:trigger
       name: Start EE Build Pipeline
-      if: ${{ parameters.publishAndBuild.buildExecutionEnvironment and parameters.publishAndBuild.sourceControlProvider.provider == 'gitlab' }}
+      if: ${{ parameters.publishAndBuild.publishToSCM and parameters.publishAndBuild.buildExecutionEnvironment and parameters.publishAndBuild.sourceControlProvider.provider == 'gitlab' }}
       input:
         repoUrl: ${{ steps['prepare-publish'].output.generatedRepoUrl }}
         projectId: ${{ steps['publish-gitlab'].output.projectId or steps['prepare-publish'].output.gitlabProjectId }}
@@ -585,12 +585,12 @@ spec:
 
       - title: ${{ parameters.publishAndBuild.sourceControlProvider.providerLabel }} EE Build Workflow Run
         url: "https://${{ steps['prepare-publish'].output.normalizedRepoUrl }}/actions/workflows/ee-build.yml"
-        if: ${{ parameters.publishAndBuild.buildExecutionEnvironment == true and parameters.publishAndBuild.sourceControlProvider.provider == 'github' }}
+        if: ${{ parameters.publishAndBuild.publishToSCM and parameters.publishAndBuild.buildExecutionEnvironment == true and parameters.publishAndBuild.sourceControlProvider.provider == 'github' }}
         icon: github
 
       - title: GitLab EE Build Pipeline Run
         url: ${{ steps['dispatch-ee-build-gitlab'].output.pipelineUrl }}
-        if: ${{ parameters.publishAndBuild.buildExecutionEnvironment == true and parameters.publishAndBuild.sourceControlProvider.provider == 'gitlab' }}
+        if: ${{ parameters.publishAndBuild.publishToSCM and parameters.publishAndBuild.buildExecutionEnvironment == true and parameters.publishAndBuild.sourceControlProvider.provider == 'gitlab' }}
         icon: gitlab
 
       - title: GitLab Merge Request
