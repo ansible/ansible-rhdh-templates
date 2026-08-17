@@ -5,6 +5,8 @@ metadata:
   name: ansible-execution-environment-builder-start-from-scratch
   title: Start from scratch
   description: Create Ansible Execution Environment definition file from scratch
+  annotations:
+    ansible.com/template-source: scm
   tags:
     - ansible
     - execution-environment

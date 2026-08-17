@@ -5,6 +5,8 @@ metadata:
   name: ansible-execution-environment-builder-cloud-automation
   title: Cloud Automation
   description: Create Ansible Execution Environment definition file with essential collections for cloud automation.
+  annotations:
+    ansible.com/template-source: scm
   tags:
     - ansible
     - execution-environment

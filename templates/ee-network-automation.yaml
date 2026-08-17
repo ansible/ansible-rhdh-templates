@@ -5,6 +5,8 @@ metadata:
   name: ansible-execution-environment-builder-network-automation
   title: Network Automation
   description: Create Ansible Execution Environment definition file for network device management with major vendors.
+  annotations:
+    ansible.com/template-source: scm
   tags:
     - ansible
     - execution-environment

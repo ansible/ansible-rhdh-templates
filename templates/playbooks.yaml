@@ -4,6 +4,8 @@ metadata:
   name: ansible-playbook-template
   title: Create Ansible Playbook Project
   description: Create a new starter Ansible playbook Git project preconfigured with best practices. The project also scaffolds a collection to help get you started.
+  annotations:
+    ansible.com/template-source: scm
   tags:
     - recommended
     - ansible
