@@ -6,6 +6,8 @@ metadata:
   title: Create wizard use cases
   description: Use this template to create actual wizard use case templates
   namespace: default
+  annotations:
+    ansible.com/template-source: scm
   tags:
     - aap-operations
     - intermediate
