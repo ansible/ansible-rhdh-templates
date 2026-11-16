@@ -25,10 +25,10 @@ spec:
           type: string
           minLength: 1
         image:
-          title: Image pull reference
+          title: Version
           type: string
           minLength: 1
-          description: The registry image to use, including its tag or digest.
+          ui:field: EEImageVersionPicker
         description:
           title: Description
           type: string
