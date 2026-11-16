@@ -1,0 +1,57 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: use-execution-environment-in-controller
+  namespace: default
+  title: Add execution environment to Controller
+  description: Register a registry image as an execution environment in Ansible Automation Controller.
+  annotations:
+    ansible.com/template-source: scm
+  tags:
+    - use-in-controller
+    - aap-operations
+spec:
+  owner: RedHat
+  type: service
+  parameters:
+    - title: Execution environment details
+      required:
+        - name
+        - image
+        - organization
+      properties:
+        name:
+          title: Execution environment name
+          type: string
+          minLength: 1
+        image:
+          title: Image pull reference
+          type: string
+          minLength: 1
+          description: The registry image to use, including its tag or digest.
+        description:
+          title: Description
+          type: string
+        organization:
+          title: Organization
+          description: The Controller organization that will own the execution environment.
+          type: object
+          resource: organizations
+          ui:field: AAPResourcePicker
+  steps:
+    - id: createExecutionEnvironment
+      name: Add execution environment to Controller
+      action: rhaap:create-execution-environment
+      input:
+        token: ${{ secrets.aapToken }}
+        deleteIfExist: false
+        values:
+          environmentName: ${{ parameters.name }}
+          environmentDescription: ${{ parameters.description }}
+          organization: ${{ parameters.organization }}
+          image: ${{ parameters.image }}
+          pull: always
+  output:
+    links:
+      - title: Open in Controller
+        url: ${{ steps.createExecutionEnvironment.output.executionEnvironment.url }}
