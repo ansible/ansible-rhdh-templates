@@ -19,8 +19,8 @@ location.
 
 Open an execution environment image in Portal, pick a version, and select
 **Use in Controller**. Start **Add execution environment to Controller** from
-the filtered Templates list. The **Version** field uses the Automation Content
-plugin to list the selected image’s registry versions. If you start the template
-directly, enter an image pull reference. Choose the Controller organization and
+the filtered Templates list. The **Tag** field uses the Automation Content
+plugin to list the selected image’s registry tags and display the resolved
+digest. If you start the template directly, enter an image pull reference. Choose the Controller organization and
 run the task with your signed-in AAP account. The completed task links to the
 execution environment in Controller.
