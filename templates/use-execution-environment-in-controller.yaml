@@ -13,6 +13,8 @@ metadata:
 spec:
   owner: RedHat
   type: service
+  formDecorators:
+    - id: ansible.aap-user-token
   parameters:
     - title: Execution environment details
       required:
